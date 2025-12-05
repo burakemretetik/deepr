@@ -1,0 +1,12 @@
+Package: deepr
+Type: Package
+Title: Basic Functionalities for Deep Learning
+Version: 0.1.0
+Author: Burak Emre Tetik
+Maintainer: The package maintainer <burakemretetik@gmail.com>
+Description: A package for deep learning created for learning purposes.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    R6
