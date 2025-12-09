@@ -228,3 +228,65 @@ mean.Tensor <- function(x) {
   Tensor$new(data = matrix(val, 1, 1), requires_grad = x$requires_grad,
              creators = list(x), creation_op = "mean", aux_data = length(x$data))
 }
+
+#' @title Sigmoid Activation
+#' @export
+sigmoid <- function(x) {
+  if (!inherits(x, "Tensor")) stop("sigmoid requires a Tensor")
+  if (!inherits(x, "Tensor")) stop("sigmoid requires a Tensor")
+
+  # Formula: 1 / (1 + exp(-x))
+  val <- 1 / (1 + exp(-x$data))
+
+  Tensor$new(
+    data = val,
+    requires_grad = x$requires_grad,
+    creators = list(x),
+    creation_op = "sigmoid"
+  )
+}
+
+#' @title Tanh Activation
+#' @export
+tanh_act <- function(x) {
+  if (!inherits(x, "Tensor")) stop("tanh requires a Tensor")
+
+  # Standard tanh function
+  val <- tanh(x$data)
+
+  Tensor$new(
+    data = val,
+    requires_grad = x$requires_grad,
+    creators = list(x),
+    creation_op = "tanh"
+  )
+}
+
+#' @title Softmax Activation (Stable)
+#' @description Computes exp(x) / sum(exp(x)) row-wise.
+#' @export
+#'
+softmax <- function(x) {
+  if (!inherits(x, "Tensor")) stop("softmax requires a Tensor")
+
+  # 1. Numerical Stability Trick: x_safe = x - max(x)
+  # We do this row-wise using 'apply'
+
+  # Shift values to prevent exp() explosion
+  row_maxes <- apply(x$data, 1, max)
+  x_safe <- x$data - row_maxes
+
+  # 2. Exponentiate
+  exps <- exp(x_safe)
+
+  # 3. Normalize
+  row_sums <- rowSums(exps)
+  probs <- exps / row_sums
+
+  Tensor$new(
+    data = probs,
+    requires_grad = x$requires_grad,
+    creators = list(x),
+    creation_op = "softmax"
+  )
+}

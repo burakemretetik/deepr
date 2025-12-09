@@ -34,19 +34,23 @@ Linear <- R6::R6Class("Linear",
     #' @description Initialize weights and biases
     #' @param in_features Integer. Input dimension.
     #' @param out_features Integer. Output dimension.
-    initialize = function(in_features, out_features) {
+    #' @param init_type String. "kaiming" (default) or "xavier".
+    initialize = function(in_features, out_features, init_type = "kaiming") {
 
-      # 1. Initialize Weights (Xavier-like initialization)
-      # Random values scaled by 0.1 to prevent exploding gradients
-      w_data <- matrix(
-        rnorm(in_features * out_features) * 0.1,
-        nrow = in_features,
-        ncol = out_features
-      )
+      # 1. Select Initialization Strategy
+      if (init_type == "kaiming") {
+        w_data <- kaiming_uniform(in_features, out_features)
+      } else if (init_type == "xavier") {
+        w_data <- xavier_uniform(in_features, out_features)
+      } else {
+        # Fallback to simple random
+        w_data <- matrix(rnorm(in_features * out_features) * 0.1,
+                         nrow = in_features, ncol = out_features)
+      }
+
       self$W <- Tensor$new(data = w_data, requires_grad = TRUE)
 
-      # 2. Initialize Bias (Zeros)
-      # Shape is (1, out_features) for broadcasting
+      # 2. Initialize Bias (Zeros is standard)
       b_data <- matrix(0, nrow = 1, ncol = out_features)
       self$b <- Tensor$new(data = b_data, requires_grad = TRUE)
     },
@@ -72,15 +76,37 @@ Linear <- R6::R6Class("Linear",
 #' @inherit Layer
 #' @export
 ReLU <- R6::R6Class("ReLU",
-                    inherit = Layer,
-                    public = list(
-                      initialize = function() {},
+  inherit = Layer,
+  public = list(
+    initialize = function() {},
 
-                      forward = function(x) {
-                        # Calls the deepr::relu function we wrote in ops.R
-                        return(relu(x))
-                      }
-                    )
+    forward = function(x) {
+      # Calls the deepr::relu function we wrote in ops.R
+      return(relu(x))
+    }
+  )
+)
+
+#' @title Sigmoid Layer
+#' @inherit Layer
+#' @export
+Sigmoid <- R6::R6Class("Sigmoid",
+  inherit = Layer,
+  public = list(
+   initialize = function() {},
+   forward = function(x) { return(sigmoid(x)) }
+  )
+)
+
+#' @title Tanh Layer
+#' @inherit Layer
+#' @export
+Tanh <- R6::R6Class("Tanh",
+  inherit = Layer,
+  public = list(
+    initialize = function() {},
+    forward = function(x) { return(tanh_act(x)) }
+  )
 )
 
 #' @title Sequential Container
