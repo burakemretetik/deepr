@@ -25,6 +25,7 @@ Layer <- R6::R6Class("Layer",
 #' @description A fully connected layer: Output = Input %*% W + b
 #' @inherit Layer
 #' @export
+#'
 Linear <- R6::R6Class("Linear",
   inherit = Layer,
   public = list(

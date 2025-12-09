@@ -22,7 +22,7 @@ Tensor <- R6::R6Class("Tensor",
       if (is.vector(data)) {
         data <- matrix(data, ncol = 1)
       } else if (!is.matrix(data)) {
-        stop("For V1, data must be a vector or a matrix.")
+        stop("Data must be a vector or a matrix.")
       }
 
       self$data <- data
@@ -32,7 +32,7 @@ Tensor <- R6::R6Class("Tensor",
       # Graph History
       self$creators <- creators
       self$creation_op <- creation_op
-      self$aux_data <- aux_data   # <--- THIS IS THE MISSING LINE
+      self$aux_data <- aux_data
       self$id <- paste0(Sys.time(), "_", runif(1))
 
       if (self$requires_grad) {
